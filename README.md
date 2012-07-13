@@ -1,4 +1,6 @@
-mongodb-node-regression-benchmarks
+mongodb-node-tests
 ==================================
 
-Contains benchmarks to ensure no performance regressions across versions of the driver
+Contains tests to ensure MongoDB is running stable in a sharded environment.
+
+

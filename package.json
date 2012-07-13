@@ -1,13 +1,15 @@
 {
   "author": "Christian Kvalheim <christkv@10gen.com> (http://www.christiankvalheim.com)",
-  "name": "mongodb-node-regression-benchmarks",
-  "description": "Performance regression tests for node.js mongodb driver",
+  "name": "mongodb-node-benchmarks",
+  "description": "Performance & stability tests for Mongodb using node.js & mongodb-node driver",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git://github.com/christkv/mongodb-node-regression-benchmarks.git"
+    "url": "git://github.com/xer0x/mongodb-node-regression-benchmarks.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "mongodb": ">0.0.1"
+  },
   "devDependencies": {
     "nodeunit": "0.7.4"
   },
