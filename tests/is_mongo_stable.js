@@ -12,7 +12,7 @@ var testCase = require('nodeunit').testCase,
 	Collection = mongodb.Collection,
 	Server = mongodb.Server;
 
-var MONGODB = 'integration_tests';
+var MONGODB = 'stability_tests';
 var client = null;
 var numberOfTestsRun = 0;
 
@@ -53,10 +53,11 @@ exports.tearDown = function(callback) {
 
 /**
  * Should insert 1000 documents and then fetch it back around 10000 times to calculate performance
- * 
+ *
  * @ignore
  */
-exports.shouldExerciseToArrayFunctionOnQueries = function(test) {
+exports.basicInsert = function(test) {
+
 	test.done();
 }
 
