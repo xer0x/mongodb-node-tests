@@ -1,7 +1,7 @@
 
-
 var mongodb = require('mongodb');
 var mongoConnect = require('../mongo-connect');
+var config = require('../userpass.json');
 
 /*!
  * Module dependencies.
@@ -13,7 +13,6 @@ var testCase = require('nodeunit').testCase,
 	Collection = mongodb.Collection,
 	Server = mongodb.Server;
 
-var MONGODB = 'test';
 var client = null;
 var numberOfTestsRun = 0;
 
@@ -31,13 +30,6 @@ var begin = function (callback) {
  */
 exports.setUp = function(callback) {
 	var self = exports;
-	var config = {
-		database: MONGODB,
-		//user:
-		//pass:
-		//host:
-		//port:
-	};
 	mongoConnect.connect(config, function (dbclient) {
 		client = dbclient;
 		if(numberOfTestsRun == 0) {
@@ -59,8 +51,10 @@ exports.setUp = function(callback) {
  */
 exports.tearDown = function(callback) {
 	var self = this;
-	var ms = +new Date - timers[numberOfTestsRun].start;
-	console.log('  Test', numberOfTestsRun, 'took ' + ms + 'ms')
+
+	//var ms = +new Date - timers[numberOfTestsRun].start;
+	//console.log('  Test', numberOfTestsRun, 'took ' + ms + 'ms')
+
 	numberOfTestsRun += 1;
 	// Close connection
 	callback();
@@ -81,6 +75,7 @@ exports.basicInsert = function(test) {
 		};
 		var payload = 'world #' + Math.floor(Math.random() * 1e5);
 		collection.insert({'hello': payload}, {safe:true}, function (err, result) {
+			if (err) {throw err;}
 			test.equal(result[0].hello, payload, 'what goes in, should come out');
 			test.done();
 		});

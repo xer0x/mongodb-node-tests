@@ -19,12 +19,16 @@ var connect = function (config, callback) {
   db.open(function (error, clientref) {
     if (error) throw error;
     if (user && password) {
-      db.authenticate(user, password, function (error, result) {
+console.log('user: ' + user);
+console.log('pass: ' + password);
+console.log('database: ' + database);
+      clientref.authenticate(user, password, function (error, result) {
         if (error) { console.warn(error); return; }
-        callback(db);
+        if (result == false) { console.warn(result); return; }
+        callback(clientref);
       });
     } else {
-      callback(db);
+      callback(clientref);
     }
   });
 };
