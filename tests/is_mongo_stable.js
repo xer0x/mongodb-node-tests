@@ -1,6 +1,7 @@
-var mongodb = process.env['TEST_NATIVE'] != null ? require('mongodb').native() : require('mongodb').pure();
-var useSSL = process.env['USE_SSL'] != null ? true : false;
-var native_parser = (process.env['TEST_NATIVE'] != null);
+
+
+var mongodb = require('mongodb');
+var mongoConnect = require('../mongo-connect');
 
 /*!
  * Module dependencies.
@@ -12,9 +13,15 @@ var testCase = require('nodeunit').testCase,
 	Collection = mongodb.Collection,
 	Server = mongodb.Server;
 
-var MONGODB = 'stability_tests';
+var MONGODB = 'test';
 var client = null;
 var numberOfTestsRun = 0;
+
+var timers = [];
+var begin = function (callback) {
+	timers[numberOfTestsRun] = {start: +new Date};
+	callback();
+};
 
 /**
  * Retrieve the server information for the current
@@ -24,15 +31,22 @@ var numberOfTestsRun = 0;
  */
 exports.setUp = function(callback) {
 	var self = exports;
-	client = new Db(MONGODB, new Server("127.0.0.1", 27017, {auto_reconnect: true, poolSize: 4, ssl:useSSL}), {native_parser: (process.env['TEST_NATIVE'] != null)});
-	client.open(function(err, db_p) {
+	var config = {
+		database: MONGODB,
+		//user:
+		//pass:
+		//host:
+		//port:
+	};
+	mongoConnect.connect(config, function (dbclient) {
+		client = dbclient;
 		if(numberOfTestsRun == 0) {
 			// If first test drop the db
 			client.dropDatabase(function(err, done) {
-				callback();
+				begin(callback);
 			});
 		} else {
-			return callback();
+			begin(callback);
 		}
 	});
 }
@@ -45,10 +59,12 @@ exports.setUp = function(callback) {
  */
 exports.tearDown = function(callback) {
 	var self = this;
+	var ms = +new Date - timers[numberOfTestsRun].start;
+	console.log('  Test', numberOfTestsRun, 'took ' + ms + 'ms')
 	numberOfTestsRun += 1;
 	// Close connection
-	client.close();
 	callback();
+	client.close();
 }
 
 /**
@@ -58,14 +74,77 @@ exports.tearDown = function(callback) {
  */
 exports.basicInsert = function(test) {
 
-	test.done();
+	client.collection('basicInsert', function (err, collection) {
+		if (err) {
+			console.log(err);
+			return;
+		};
+		var payload = 'world #' + Math.floor(Math.random() * 1e5);
+		collection.insert({'hello': payload}, {safe:true}, function (err, result) {
+			test.equal(result[0].hello, payload, 'what goes in, should come out');
+			test.done();
+		});
+	});
 }
+
+exports.can_do_many_inserts = function(test) {
+	var numTries = 10000;
+	var counter = 0;
+	var insert = function (num) {
+		client.collection('doManyInserts', function (err, collection) {
+			if (err) { throw err; }
+			var random = 'random#' + Math.floor(Math.random() * 1e5);
+			collection.insert({'random': random, 'notrandom': num}, {safe: true},  function(err, res) {
+				counter++;
+				if (counter === numTries) {
+					collection.count(function (err, count) {
+						test.equal(numTries, count, 'expect every insert to work');
+						test.done();
+					})
+				}
+			});
+		});
+	};
+	for (var i=0; i<numTries; i++) {
+		insert(i);
+	}
+
+};
+
+exports.can_do_many_searches = function(test) {
+	var numTries = 10000;
+	var counter = 0;
+	var find = function (num) {
+		client.collection('doManyInserts', function (err, collection) {
+			if (err) { throw err; }
+			var needle = counter;//Math.floor(Math.random() * 10000);
+			collection.find({'notrandom': needle}).toArray(function(err, res) {
+				counter++;
+				if (numTries === counter) {
+					test.ok('hello')
+					test.done();
+				}
+			});
+		});
+	};
+	for (var i=0; i<numTries; i++) {
+		find(i);
+	}
+
+};
+
+
+exports.indexedInserts = function (test) {
+	test.done();
+};
+
+exports.indexedLookups = function (test) {
+	test.done();
+};
 
 exports.shouldNotCrash = function(test) {
 	test.done();
 }
-
-
 
 
 
