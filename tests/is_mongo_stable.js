@@ -137,6 +137,15 @@ exports.indexedLookups = function (test) {
 	test.done();
 };
 
+exports.shardedInserts = function (test) {
+  // TODO: how do we force sharding?
+	test.done();
+};
+
+exports.shardedLookups = function (test) {
+	test.done();
+};
+
 exports.shouldNotCrash = function(test) {
 	test.done();
 }
