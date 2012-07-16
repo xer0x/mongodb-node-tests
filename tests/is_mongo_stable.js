@@ -1,7 +1,9 @@
 
+//var config = require('../singleserver.json');
+var config = require('../replset.json');
+
 var mongodb = require('mongodb');
 var mongoConnect = require('../mongo-connect');
-var config = require('../userpass.json');
 
 /*!
  * Module dependencies.

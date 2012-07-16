@@ -4,13 +4,25 @@
 var mongodb = require('mongodb');
 
 var connect = function (config, callback) {
-  var host = config.host || '127.0.0.1';
   var user = config.username;
   var password = config.password;
-  var port = config.port || 27017;
   var database = config.database || 'test';
+  var serverOptions = {auto_reconnect: true, pool: 4};
 
-  var server = new mongodb.Server(host, port, {auto_reconnect: true, pool: 4});
+  var server;
+  if (config.servers) {
+    var serverSet = config.servers.map(function(server) {
+			return new mongodb.Server(server.host, server.port || 27017, serverOptions);
+    });
+    var replSetOptions = {
+      rs_name: 'joyent',
+      read_secondary: true, // default: false
+      socketOptions: {timeout: 5, keepAlive: 0}
+    };
+    server = new mongodb.ReplSetServers(serverSet, replSetOptions);
+  } else {
+    server = new mongodb.Server(config.host || '127.0.0.1', config.port || 27017, serverOptions);
+  } 
   db = new mongodb.Db(database, server, {});
 
   db.open(function (error, clientref) {
