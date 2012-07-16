@@ -139,6 +139,11 @@ exports.indexedLookups = function (test) {
 
 exports.shardedInserts = function (test) {
   // TODO: how do we force sharding?
+  //
+  // db.runCommand( {enableSharding: config.database} );
+  //
+  // db.runCommand( {shardCollection: config.database + '.shardedCollection', key: {shard_key_id: 1} } );
+  //
 	test.done();
 };
 
