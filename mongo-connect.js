@@ -1,9 +1,6 @@
 
 // Connect to MongoDB and share that connection.
 
-// FIXME: the runCallbacks & connection sharing stuff here is useless
-//        {pool: 4} does the job better.
-
 var mongodb = require('mongodb');
 
 var connect = function (config, callback) {
@@ -19,10 +16,8 @@ var connect = function (config, callback) {
   db.open(function (error, clientref) {
     if (error) throw error;
     if (user && password) {
-console.log('user: ' + user);
-console.log('pass: ' + password);
-console.log('database: ' + database);
-      clientref.authenticate(user, password, function (error, result) {
+      var authsrc = user === 'admin' ? clientref.admin() : clientref; // TODO: is this neeeded?
+      authsrc.authenticate(user, password, function (error, result) {
         if (error) { console.warn(error); return; }
         if (result == false) { console.warn(result); return; }
         callback(clientref);
