@@ -16,8 +16,8 @@ var connect = function (config, callback) {
     });
     var replSetOptions = {
       rs_name: 'joyent',
-      read_secondary: true, // default: false
-      socketOptions: {timeout: 5, keepAlive: 0}
+      read_secondary: false, // default: false -- do we need to set slaveOk() to work?
+      socketOptions: {timeout: 1 * 1000, keepAlive: 0, noDelay: true}
     };
     server = new mongodb.ReplSetServers(serverSet, replSetOptions);
   } else {

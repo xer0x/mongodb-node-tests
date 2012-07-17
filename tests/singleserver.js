@@ -1,6 +1,5 @@
 
-//var config = require('../singleserver.json');
-var config = require('../replset.json');
+var config = require('../singleserver.json');
 
 var mongodb = require('mongodb');
 var mongoConnect = require('../mongo-connect');
@@ -130,32 +129,8 @@ exports.can_do_many_searches = function(test) {
 
 };
 
-
-exports.indexedInserts = function (test) {
-	test.done();
-};
-
-exports.indexedLookups = function (test) {
-	test.done();
-};
-
-exports.shardedInserts = function (test) {
-  // TODO: how do we force sharding?
-  //
-  // db.runCommand( {enableSharding: config.database} );
-  //
-  // db.runCommand( {shardCollection: config.database + '.shardedCollection', key: {shard_key_id: 1} } );
-  //
-	test.done();
-};
-
-exports.shardedLookups = function (test) {
-	test.done();
-};
-
 exports.shouldNotCrash = function(test) {
 	test.done();
 }
-
 
 
